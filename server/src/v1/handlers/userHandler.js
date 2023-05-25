@@ -7,12 +7,12 @@ const jsonwebtoken =require('jsonwebtoken')
 exports.register=async(req,res)=>{
     const {password} =req.body;
     try{
-        //AES加密算法对密码进行加密，赋值给req中的密码
+        //1. AES加密算法对密码进行加密，赋值给req中的密码
         req.body.password=CryptoJS.AES.encrypt(
             password,
             process.env.PASSWORD_SECRET_KEY
         )
-        //等待创建用户完毕
+        //2. 等待创建用户完毕(向数据库中写入数据)
         const user =await User.create(req.body)
         //令牌加密
         const token =jsonwebtoken.sign(

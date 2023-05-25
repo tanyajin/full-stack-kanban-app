@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {register,login} = require('../controllers/user')
+const {register,login} = require('../handlers/userHandler')
 
 const {signupValidate,loginValidate}=require('../handlers/requestValidate')
 const {tokenValidate}=require('../handlers/tokenValidate')
@@ -7,7 +7,7 @@ const {tokenValidate}=require('../handlers/tokenValidate')
 
 //注册路由
 router.post('/signup',
-    //注册验证
+    //注册信息合法性验证
     signupValidate,
     //注册操作
     register
@@ -15,7 +15,7 @@ router.post('/signup',
 
 //登录
 router.post('/login',
-    //登录验证
+    //登录信息合法性验证
     loginValidate,
     //登录操作
     login
