@@ -13,9 +13,11 @@ const tokenDecode = (req)=>{
             )
             return decodedToken;
         }catch{
+            console.log('handlers/tokenValidate ：令牌解密出错')
             return false;
         }    
     }else{
+        console.log('handlers/tokenValidate ：未获取到令牌')
         return false;
     }
    

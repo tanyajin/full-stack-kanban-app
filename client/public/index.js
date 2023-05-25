@@ -1,9 +1,9 @@
-import logoDark from './images/Grey logo.png'
+import darkLogo from './images/Grey logo.png'
 import appIcon from './images/favicon.png'
 
 const assets = {
     img:{
-        logoDark,
+        darkLogo,
         appIcon
     },
     
