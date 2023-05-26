@@ -3,20 +3,25 @@ import { Outlet,useNavigate} from 'react-router-dom'
 import tokenValidate from '../../tools/tokenValidate'
 import Loading from '../common/Loading'
 import Sidebar from '../common/Sidebar'
-import images from '../../../public/index.js'
-import { Container,Box } from '@mui/material'
+import { Box } from '@mui/material'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../../redux/features/userSlice'
+
 
 
 const AppLayout = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(true);
 
   const checkToken = async () =>{
-    const isAuthenticated  = await tokenValidate.isAuthenticated()
-    if(!isAuthenticated){
-      //没有令牌就导去login页面
+    const user  = await tokenValidate.isAuthenticated()
+    if(!user){
+      //没有user就导去login页面
       navigate('/login')
     }else{ 
+      //有user证明已经成功登录,将user传给setUser
+      dispatch(setUser(user))
       setLoading(false)
     }
   }

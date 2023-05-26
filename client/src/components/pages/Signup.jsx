@@ -170,7 +170,7 @@ const Signup = () => {
         sx={{textTransform:'none'}}
         fullWidth
         >
-          Already In? login Now.
+          Already In? Login Now.
       </Button>
 
     </Box>

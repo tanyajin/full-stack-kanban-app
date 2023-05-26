@@ -24,7 +24,7 @@ router.post('/login',
 router.post('/verify-token',
     tokenValidate,
     (req,res)=>{
-        res.send(200).json({user:req.user})
+        res.status(200).json({user:req.user})
     }
 )
 
