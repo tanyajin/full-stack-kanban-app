@@ -4,7 +4,7 @@ const {body}=require('express-validator')
 const {tokenValidate}=require('../handlers/tokenValidate')
 const boardHandler = require('../handlers/boardHandler')
 
-router.post('./',
+router.post('/',
 tokenValidate,
 boardHandler.create
 
