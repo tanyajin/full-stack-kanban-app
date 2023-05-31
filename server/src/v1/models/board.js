@@ -25,11 +25,11 @@ const boardSchema = new Schema({
     position:{
         type:Number
     },
-    Marked:{
+    marked:{
         type:Boolean,
         default:false
     },
-    MarkedPosition:{
+    markedPosition:{
         type:Number,
         default:0
     }
