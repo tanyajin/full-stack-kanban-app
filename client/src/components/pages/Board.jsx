@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import boardApi from '../../api/boardApi'
+import { useParams,useNavigate } from 'react-router-dom'
+import {useDispatch,useSelector} from 'react-redux'
 import { Box, IconButton, TextField, Button, Typography,Divider} from '@mui/material'
 import StarOutlinedIcon from '@mui/icons-material/StartOutlined'
 import StartBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined'
 import DelectOutlinedIcon from '@mui/icons-material/DeleteOutlined'
+import EmojiSelector from '../common/EmojiSelector'
+import boardApi from '../../api/boardApi'
+import {setBoards} from '../../redux/features/boardSlice'
 
+let timer
+const timeout = 500
 
 
 const Board = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { boardId } = useParams()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('');
@@ -16,6 +23,7 @@ const Board = () => {
   const [isMarked, setIsMarked] = useState(false);
   const [icon, setIcon] = useState('');
 
+  const boards = useSelector((state)=>state.board.value)
 
   useEffect(() => {
     const getBoard = async () => {
@@ -26,7 +34,7 @@ const Board = () => {
         setSections(res.sections)
         setIsMarked(res.marked)
         setIcon(res.icon)
-        // console.log(res)
+       // console.log(res)
       } catch (error) {
         alert(error)
       }
@@ -34,13 +42,56 @@ const Board = () => {
     getBoard()
   }, [boardId]);
 
+  const onIconChange = async(newIcon)=>{
+    let temp =[...boards]
+    const index = temp.findIndex(e=>e.id===boardId)
+    temp[index]={...temp[index],icon:newIcon}
+    setIcon(newIcon);
+    dispatch(setBoards(temp))
+    try{
+      await boardApi.update(boardId,{icon:newIcon})
+    }catch(error){
+      console.log(error)
+      alert(error)
+    }
+
+  }
 
 
+  const updateTitle=async(e)=>{
+    clearTimeout(timer)
+    const newTitle = e.target.value
+    setTitle(newTitle)
 
+    let temp =[...boards]
+    const index = temp.findIndex(e=>e.id===boardId)
+    temp[index]={...temp[index],title:newTitle}
+    dispatch(setBoards(temp))
 
+    timer=setTimeout(async() => { 
+      try{
+        await boardApi.update(boardId,{title:newTitle})
+      }catch(error){
+        console.log(error)
+        alert(error)
+      }
+     }, timeout)
+  }
 
+  const updateDescription =async(e)=>{
+    clearTimeout(timer)
+    const newDescription = e.target.value
+    setDescription(newDescription)
 
-
+    timer=setTimeout(async() => { 
+      try{
+        await boardApi.update(boardId,{description:newDescription})
+      }catch(error){
+        console.log(error)
+        alert(error)
+      }
+     }, timeout)
+  }
 
 
   return (
@@ -70,11 +121,13 @@ const Board = () => {
       <Box sx={{ padding: '10px 50px' }}>
         <Box>
           { /* {emoji} */}
+          <EmojiSelector icon={icon} onChange={onIconChange}/>
           <TextField
             value={title}
             placeholder='Untitled'
             variant='outlined'
             fullWidth
+            onChange={updateTitle}
             sx={{
               '& .MuiOutlinedInput-input': { padding: 0 },
               '& .MuiOutlinedInput-notchedOutline': { border: 'unset' },
@@ -88,6 +141,7 @@ const Board = () => {
             variant='outlined'
             multiline
             fullWidth
+            onChange={updateDescription}
             sx={{
               '& .MuiOutlinedInput-input': { padding: 0 },
               '& .MuiOutlinedInput-notchedOutline': { border: 'unset' },

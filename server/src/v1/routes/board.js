@@ -36,5 +36,17 @@ tokenValidate,
 boardHandler.getOne
 )
 
+router.put('/:boardId',
+param('boardId').custom(value=>{
+    if(!objectIdValidate(value)){
+        return Promise.reject('invalid id')
+    }else return Promise.resolve()
+    
+}),
+requestHandler, 
+tokenValidate,
+boardHandler.update
+)
+
 module.exports = router
 
