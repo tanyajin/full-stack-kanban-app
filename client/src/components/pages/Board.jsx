@@ -9,6 +9,7 @@ import EmojiSelector from '../common/EmojiSelector'
 import boardApi from '../../api/boardApi'
 import {setBoards} from '../../redux/features/boardSlice'
 import {setMarkedList} from '../../redux/features/markedSlice'
+import Kanban from '../common/Kanban'
 
 
 
@@ -206,22 +207,9 @@ const Board = () => {
           />
         </Box>
 
-        <Box>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <Button>
-              Add section
-            </Button>
-            <Typography variant='body2' fontWeight='700'>
-              {sections.length} Sections
-            </Typography>
-          </Box>
-          <Divider sx={{ margin:'10px 0'}}/>
+        <Box>       
           {/* { tasks } */}
-    
+            <Kanban/>
         </Box>
       </Box>
 
