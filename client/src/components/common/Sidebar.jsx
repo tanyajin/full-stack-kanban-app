@@ -5,10 +5,11 @@ import {useNavigate, useParams,Link} from 'react-router-dom'
 import {Drawer,List,ListItem,Typography,IconButton,Box,ListItemButton} from '@mui/material'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
+import {DragDropContext,Droppable,Draggable } from "react-beautiful-dnd"
 import boardApi from '../../api/boardApi'
 import {setBoards} from '../../redux/features/boardSlice'
 import images from '../../../public/index'
-import {DragDropContext,Droppable,Draggable } from "react-beautiful-dnd"
+import MarkedList from './MarkedList'
 
 
 const Sidebar = () => {
@@ -109,21 +110,9 @@ return (
                     </IconButton>
                 </Box>
             </ListItem>
-           
-            <ListItem>
-                <Box sx={{
-                    paddingTop:'10px',
-                    width:'100%',
-                    display:'flex',
-                    alignItems:'center',
-                    justifyContent:'space-between'
-                }}> 
+            
+           <MarkedList/>
 
-                    <Typography variant='body2' fontWeight='700'>
-                      Marked
-                    </Typography>
-                </Box>
-             </ListItem>
 
              <ListItem>
                   <Box sx={{

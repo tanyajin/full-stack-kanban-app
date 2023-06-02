@@ -7,7 +7,9 @@ const boardApi ={
     getAll:()=> axiosClient.get('boards'),
     updatePosition:(params)=> axiosClient.put('boards',params),
     getOne:(id)=>axiosClient.get(`boards/${id}`),
-    update:(id,params) => axiosClient.put(`boards/${id}`,params)
+    delete:(id)=>axiosClient.delete(`boards/${id}`),
+    update:(id,params) => axiosClient.put(`boards/${id}`,params),
+    getMarked:()=>axiosClient.get('boards/allMarked')
 }
 
 export default boardApi

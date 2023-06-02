@@ -23,6 +23,11 @@ boardHandler.updatePosition
 
 )
 
+router.get('/allMarked',
+tokenValidate,
+boardHandler.getMarked
+)
+
 router.get('/:boardId',
 param('boardId').custom(value=>{
     if(!objectIdValidate(value)){
@@ -47,6 +52,20 @@ requestHandler,
 tokenValidate,
 boardHandler.update
 )
+
+router.delete('/:boardId',
+param('boardId').custom(value=>{
+    if(!objectIdValidate(value)){
+        return Promise.reject('invalid id')
+    }else return Promise.resolve()
+    
+}),
+requestHandler, 
+tokenValidate,
+boardHandler.delete
+)
+
+
 
 module.exports = router
 

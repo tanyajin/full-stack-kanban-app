@@ -79,7 +79,7 @@ exports.update = async (req, res) => {
                 user: currentBoard.user,
                 marked: true,
                 _id: { $ne: boardId }
-            })
+            }).sort('markedPosition')
 
             if (allMarked) {
                 req.body.markedPosition = allMarked.length > 0 ? allMarked.length : 0
@@ -100,6 +100,62 @@ exports.update = async (req, res) => {
         )
         res.status(200).json(board)
     } catch (error) {
+        res.status(500).json(error)
+    }
+
+}
+
+
+exports.getMarked =async(req,res)=>{
+    try{
+        const allMarked = await Board.find({
+            user:req.user._id,
+            marked:true
+        }).sort('-markedPosition')
+        res.status(200).json(allMarked)
+    }catch(error){
+        res.status(500).json(error)
+    }
+}
+
+
+exports.delete =async(req,res)=>{
+    const {boardId} = req.params
+    try{
+        const sections =await Section.find({board:boardId})
+        for(const section of sections){
+            await Task.deleteMany({section:section.id})
+        }
+        await Section.deleteMany({board:boardId})
+
+        const currentBoard =await Board.findById(boardId)
+
+        if(currentBoard.marked){
+            const allMarked = await Board.find({
+                user: currentBoard.user,
+                marked: true,
+                _id: { $ne: boardId }
+            }).sort('markedPosition')
+
+            for (const key in allMarked) {
+                const element = allMarked[key]
+                await Board.findByIdAndUpdate(
+                    element.id,
+                    {$set:{markedPosition:key}}
+                )
+            }
+        }
+        await Board.deleteOne({_id:boardId})
+        const boards = await Board.find().sort('position')
+        for (const key in boards) {
+            const board = boards[key]
+            await Board.findByIdAndUpdate(
+                board.id,
+                { $set: { position: key } }
+            )
+        }
+        res.status(200).json('deleted')
+    }catch(error){
         res.status(500).json(error)
     }
 

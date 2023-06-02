@@ -8,6 +8,9 @@ import DelectOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import EmojiSelector from '../common/EmojiSelector'
 import boardApi from '../../api/boardApi'
 import {setBoards} from '../../redux/features/boardSlice'
+import {setMarkedList} from '../../redux/features/markedSlice'
+
+
 
 let timer
 const timeout = 500
@@ -24,6 +27,8 @@ const Board = () => {
   const [icon, setIcon] = useState('');
 
   const boards = useSelector((state)=>state.board.value)
+  const markedList = useSelector((state)=>state.allMarked.value)
+  
 
   useEffect(() => {
     const getBoard = async () => {
@@ -34,7 +39,7 @@ const Board = () => {
         setSections(res.sections)
         setIsMarked(res.marked)
         setIcon(res.icon)
-       // console.log(res)
+        console.log(res)
       } catch (error) {
         alert(error)
       }
@@ -46,6 +51,14 @@ const Board = () => {
     let temp =[...boards]
     const index = temp.findIndex(e=>e.id===boardId)
     temp[index]={...temp[index],icon:newIcon}
+
+    if(isMarked){
+      let tempMarked =[...markedList]
+      const markedIndex = tempMarked.findIndex(e=>e.id===boardId)
+      tempMarked[markedIndex]={...tempMarked[markedIndex],icon:newIcon}
+      dispatch(setMarkedList(tempMarked))
+    }
+
     setIcon(newIcon);
     dispatch(setBoards(temp))
     try{
@@ -66,6 +79,14 @@ const Board = () => {
     let temp =[...boards]
     const index = temp.findIndex(e=>e.id===boardId)
     temp[index]={...temp[index],title:newTitle}
+
+    if(isMarked){
+      let tempMarked =[...markedList]
+      const markedIndex = tempMarked.findIndex(e=>e.id===boardId)
+      tempMarked[markedIndex]={...tempMarked[markedIndex],title:newTitle}
+      dispatch(setMarkedList(tempMarked))
+    }
+
     dispatch(setBoards(temp))
 
     timer=setTimeout(async() => { 
@@ -93,6 +114,41 @@ const Board = () => {
      }, timeout)
   }
 
+  const addMarked = async()=> {
+    try {
+     const board = await boardApi.update(boardId,{marked:!isMarked})
+      let newMarkedList = [...markedList]
+      if(isMarked){
+        newMarkedList=newMarkedList.filter(e=>e.id !== boardId)
+      }else{
+        newMarkedList.unshift(board)
+      }
+      dispatch(setMarkedList(newMarkedList))
+      setIsMarked(!isMarked)
+    
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  const deleteBoard =async()=>{
+    try{
+      await boardApi.delete(boardId)
+      if(isMarked){
+        const newMarkedList = markedList.filter(e=>e.id !==boardId)
+        dispatch(setMarkedList(newMarkedList))
+      }
+      const newList =boards.filter(e=>e.id !==boardId)
+      if(newList.length ===0){
+        navigate('/boards')
+      }else{
+        navigate(`/boards/${newList[0].id}`)
+      }
+      dispatch(setBoards(newList))
+    }catch(error){
+      alert(error)
+    }
+  }
 
   return (
     <>
@@ -103,7 +159,7 @@ const Board = () => {
 
         width: '100%'
       }}>
-        <IconButton variant='outlined'>
+        <IconButton variant='outlined' onClick={addMarked}>
           {
             isMarked ? (
               <StarOutlinedIcon color='warning' />
@@ -113,7 +169,7 @@ const Board = () => {
           }
         </IconButton>
 
-        <IconButton variant='outlined' color='error' >
+        <IconButton variant='outlined' color='error'  onClick={deleteBoard}>
           <DelectOutlinedIcon />
         </IconButton>
       </Box>
