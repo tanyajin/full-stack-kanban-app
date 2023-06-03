@@ -5,9 +5,10 @@ exports.create = async(req,res)=>{
     const {boardId} =req.params
     try{
         const section = await Section.create({board:boardId})
-        section._doc.task=[]
+        section._doc.tasks=[]
         res.status(201).json(section)    
     }catch(error){
+        console.error(error)
         res.status(500).json(error)
     }
 }

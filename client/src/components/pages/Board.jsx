@@ -209,7 +209,7 @@ const Board = () => {
 
         <Box>       
           {/* { tasks } */}
-            <Kanban/>
+            <Kanban data={sections} boardId={boardId}/>
         </Box>
       </Box>
 
